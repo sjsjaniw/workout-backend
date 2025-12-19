@@ -84,12 +84,12 @@ class WorkoutRepository(BaseRepository[WorkoutData]):
         super().__init__(WorkoutData, session)
 
 
-async def login_or_register_by_telegram(
-    tg_id: int, username: str, session: AsyncSession
+async def login_or_register_by_provider_id(
+    id: int, username: str, provider: str, session: AsyncSession
 ):
     query = (
         select(SocialAccount)
-        .where((SocialAccount.provider == "telegram") & (SocialAccount.id == tg_id))
+        .where((SocialAccount.provider == provider) & (SocialAccount.social_id == id))
         .options(joinedload(SocialAccount.user))
     )
 
@@ -102,7 +102,7 @@ async def login_or_register_by_telegram(
     session.add(new_user)
     await session.flush()
 
-    new_link = SocialAccount(user_id=new_user.id, provider="telegram", id=tg_id)
+    new_link = SocialAccount(user_id=new_user.id, provider=provider, social_id=id)
     session.add(new_link)
 
     await session.commit()

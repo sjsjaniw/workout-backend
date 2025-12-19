@@ -59,6 +59,9 @@ class SocialAccount(Base):
     __tablename__ = "social_accounts"
 
     user: Mapped["User"] = relationship(back_populates="social_accounts")
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     provider: Mapped[str] = mapped_column(String(50), nullable=False)
     social_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
 
